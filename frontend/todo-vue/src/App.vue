@@ -1,5 +1,4 @@
 <script>
-import { setTransitionHooks } from 'vue';
 import BaseInput from './components/BaseInput.vue';
 import TodoItems from './components/TodoItems.vue';
 import axios from 'axios'
