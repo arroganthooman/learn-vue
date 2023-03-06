@@ -7,8 +7,16 @@ export default {
   data() {
     return {
       todoMessage: "",
-      todos: [],
-      dones: []
+      // todos: [],
+      // dones: []
+    }
+  },
+  computed: {
+    todos() {
+      return this.$store.state.todos
+    },
+    dones() {
+      return this.$store.state.dones
     }
   },
   components: {
