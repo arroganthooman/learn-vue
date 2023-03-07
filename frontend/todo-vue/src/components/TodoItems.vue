@@ -15,36 +15,22 @@
 <script>
 import checkImage from '../assets/img/check.png'
 import deleteImage from '../assets/img/deleteicon.png'
-import axios from 'axios'
 
 export default {
-    props: ['todo', 'todoId', 'type', 'refreshFunction'],
+    props: ['todo', 'todoId', 'type'],
     data() {
         return {
-            // todo, todoId, type, handlerFunction,
             image: this.type === "done" ? checkImage : deleteImage
         }
     },
     methods: {
-        async doneTodo() {
-            try {
-                const todoId = this.todoId
-                const res = await axios.post('http://127.0.0.1:3000/done', {todoId})
-                this.refreshFunction()
-            } catch (err) {
-                console.log(err)
-                alert('error when calling done todo')
-            }
+        doneTodo() {
+            this.$store.dispatch('doneTodo', this.todoId)
+            this.$store.dispatch('fetchAll')
         },
-        async removeDone() {
-            try {
-                const todoId = this.todoId
-                const res = await axios.post('http://127.0.0.1:3000/remove-done', {todoId})
-                this.refreshFunction()
-            } catch (err) {
-                console.log(err)
-                alert('error when calling remove todo')
-            }
+        removeDone() {
+            this.$store.dispatch('removeDone', this.todoId)
+            this.$store.dispatch('fetchAll')
         }
     }
 }

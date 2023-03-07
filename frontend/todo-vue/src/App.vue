@@ -1,65 +1,33 @@
 <script>
 import BaseInput from './components/BaseInput.vue';
 import TodoItems from './components/TodoItems.vue';
-import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
-      todoMessage: "",
-      // todos: [],
-      // dones: []
+      todoMessage: ""
     }
   },
   computed: {
-    todos() {
-      return this.$store.state.todos
-    },
-    dones() {
-      return this.$store.state.dones
-    }
+    ...mapGetters({
+      todos: 'getTodos',
+      dones: 'getDones'
+    })
   },
   components: {
     BaseInput,
     TodoItems
   },
   methods: {
-    printTodo() {
-      console.log(this.todoMessage)
+    addTodo() {
+      this.$store.dispatch('addTodos', this.todoMessage)
+      this.todoMessage = ''
+      this.refreshFunction()
     },
-    async fetchAllTodo() { 
-      try {
-        const res = await axios.get('http://127.0.0.1:3000/todo')
-        console.log(res.data.data)
-        this.todos = res.data.data
-      } catch (err) {
-        console.log(err)
-        alert('error when fetching all todo')
-      }
-    },
-    async addTodo() {
-      try {
-        const todoMessage = this.todoMessage
-        const res = await axios.post('http://127.0.0.1:3000/todo', {todoMessage})
-        this.todoMessage = ''
-        this.fetchAllTodo()
-      } catch (err) {
-        console.log(err)
-        alert('error when submit todo')
-      }
-    },
-    async fetchAllDone() {
-      try {
-        const res = await axios.get('http://127.0.0.1:3000/done')
-        this.dones = res.data.data
-      } catch (err) {
-        console.log(err)
-        alert('error when get all done')
-      }
-    },
-    async refreshFunction() {
-      this.fetchAllTodo()
-      this.fetchAllDone()
+    refreshFunction() {
+      console.log("sblm")
+      this.$store.dispatch('fetchAll')
     }
   },
   mounted() {
@@ -77,11 +45,11 @@ export default {
   <div class="wrapper">
     <div class="on-going">
       <h2>To-Do</h2>
-      <TodoItems v-for="item in todos" :todo="item.todoMessage" type="done" :todoId="item.id" :refreshFunction="refreshFunction" />
+      <TodoItems v-for="item in todos" :todo="item.todoMessage" type="done" :todoId="item.id" />
     </div>
     <div class="done">
       <h2>Done</h2>
-      <TodoItems v-for="item in dones" :todo="item.todoMessage" type="delete" :todoId="item.id" :refreshFunction="refreshFunction"/>
+      <TodoItems v-for="item in dones" :todo="item.todoMessage" type="delete" :todoId="item.id" />
     </div>
   </div>
 </template>
