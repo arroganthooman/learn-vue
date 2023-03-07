@@ -26,11 +26,9 @@ export default {
     methods: {
         doneTodo() {
             this.$store.dispatch('doneTodo', this.todoId)
-            this.$store.dispatch('fetchAll')
         },
         removeDone() {
             this.$store.dispatch('removeDone', this.todoId)
-            this.$store.dispatch('fetchAll')
         }
     }
 }

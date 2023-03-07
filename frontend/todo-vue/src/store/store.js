@@ -1,10 +1,12 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
+import { BACKEND_URL } from '../config'
 
 export const store = createStore({
     state: {
         todos:[],
-        dones:[]
+        dones:[],
+        archives:[]
     },
     getters: {
         getTodos: state => {
@@ -12,76 +14,96 @@ export const store = createStore({
         },
         getDones: state => {
             return state.dones
+        },
+        getArchives: state => {
+            return state.archives
         }
     },
     mutations: {
-        addTodos: (state, todoMessage) => {
-            const URL = "http://localhost:3000/todo"
+        refreshTodo: (state, todos) => {
+            state.todos = todos
+        }, 
+        refreshDone: (state, dones) => {
+            state.dones = dones
+        },
+        refreshArchive: (state, archives) => {
+            state.archives = archives
+        }
+    },
+    actions: {
+        addTodos: ({dispatch}, todoMessage) => {
+            const URL = `${BACKEND_URL}/todo`
             try {
                 axios.post(URL, {todoMessage})
-                .then((res) => {})
+                .then((res) => {
+                    console.log("addtodo", res)
+                    dispatch('refresh')
+                })
             } catch (err) {
                 console.log(err)
                 alert('error when submit todo')
             }
-            
-        }, fetchAllTodo: (state) => {
+        },
+        doneTodo: ({dispatch}, todoId) => {
             try {
-                axios.get('http://127.0.0.1:3000/todo')
-                .then(res => {
-                    state.todos = res.data.data
+                axios.post(`${BACKEND_URL}/done`, {todoId})
+                .then((_) => {
+                    dispatch('refresh')
                 })
-              } catch (err) {
-                console.log(err)
-                alert('error when fetching all todo')
-              }
-        }, fetchAllDone: (state) => {
-            try {
-                axios.get('http://127.0.0.1:3000/done')
-                .then(res => {
-                    state.dones = res.data.data
-                })
-              } catch (err) {
-                console.log(err)
-                alert('error when get all done')
-              }
-        }, doneTodo: (_, todoId) => {
-            try {
-                axios.post('http://127.0.0.1:3000/done', {todoId})
-                .then(() => {})
             } catch (err) {
                 console.log(err)
                 alert('error when calling done todo')
             }
-        }, removeDone: (_, todoId) => {
+        },
+        removeDone: ({dispatch}, todoId) => {
             try {
-                axios.post('http://127.0.0.1:3000/remove-done', {todoId})
-                .then(() => {})
+                axios.post(`${BACKEND_URL}/remove-done`, {todoId})
+                .then((_) => {
+                    dispatch('refresh')
+                })
             } catch (err) {
                 console.log(err)
                 alert('error when calling remove todo')
             }
-        }
-    },
-    actions: {
-        addTodos: (context, payload) => {
-            context.commit('addTodos', payload)
         },
         fetchAllTodo: (context) => {
-            context.commit('fetchAllTodo')
+            try {
+                axios.get(`${BACKEND_URL}/todo`)
+                .then(res => {
+                    console.log("fetching all todo", res.data.data)
+                    context.commit('refreshTodo', res.data.data)
+                })
+            } catch (err) {
+                console.log(err)
+                alert('error when fetching all todo')
+            }
         },
-        fetchAllDone: context => {
-            context.commit('fetchAllDone')
+        fetchAllDone: (context) => {
+            try {
+                axios.get(`${BACKEND_URL}/done`)
+                .then(res => {
+                    console.log("fetch all done", res)
+                    context.commit('refreshDone', res.data.data)
+                })
+            } catch (err) {
+                console.log(err)
+                alert('error when get all done')
+            }
         },
-        doneTodo: context => {
-            context.commit('doneTodo')
+        fetchArchived: (context) => {
+            try {
+                axios.get(`${BACKEND_URL}/archive`)
+                .then(res => {
+                    context.commit('refreshArchive', res.data.data)
+                })
+            } catch (err) {
+                console.log(err)
+                alert('error when get archived')
+            }
         },
-        removeDone: context => {
-            context.commit('removeDone')
-        },
-        fetchAll: context => {
-            context.commit('fetchAllTodo')
-            context.commit('fetchAllDone')
+        refresh: ({dispatch}) => {
+            dispatch("fetchAllTodo")
+            dispatch("fetchAllDone")
         }
     }
 })

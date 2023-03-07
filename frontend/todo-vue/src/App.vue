@@ -1,116 +1,34 @@
-<script>
-import BaseInput from './components/BaseInput.vue';
-import TodoItems from './components/TodoItems.vue';
-import { mapGetters } from 'vuex'
-
-export default {
-  data() {
-    return {
-      todoMessage: ""
-    }
-  },
-  computed: {
-    ...mapGetters({
-      todos: 'getTodos',
-      dones: 'getDones'
-    })
-  },
-  components: {
-    BaseInput,
-    TodoItems
-  },
-  methods: {
-    addTodo() {
-      this.$store.dispatch('addTodos', this.todoMessage)
-      this.todoMessage = ''
-      this.refreshFunction()
-    },
-    refreshFunction() {
-      console.log("sblm")
-      this.$store.dispatch('fetchAll')
-    }
-  },
-  mounted() {
-    this.refreshFunction()
-  }
-}
-</script>
+<script></script>
 
 <template>
-  <h1 style="margin-top:70px">Simple To-Do App</h1>
-  <div class="input-wrapper">
-    <BaseInput style="margin-top:15px" v-model="todoMessage" />
-    <button class="submit-button" @click="$event => addTodo()">Submit</button>
+  <div id="nav">
+    <router-link to="/">Home</router-link>
+    <router-link to="/archive">Archive</router-link>
   </div>
-  <div class="wrapper">
-    <div class="on-going">
-      <h2>To-Do</h2>
-      <TodoItems v-for="item in todos" :todo="item.todoMessage" type="done" :todoId="item.id" />
-    </div>
-    <div class="done">
-      <h2>Done</h2>
-      <TodoItems v-for="item in dones" :todo="item.todoMessage" type="delete" :todoId="item.id" />
-    </div>
-  </div>
+  <router-view />
 </template>
 
 <style scoped>
 
-h1 {
-  font-size: 2rem;
-  color: black;
-  font-weight: 600;
-  text-align: center;
-}
-.wrapper {
-  display: flex;
-  justify-content: space-around;
-  width: 100%; 
-  margin: 30px 0 0 0;
-}
-
-.wrapper .on-going, .wrapper .done {
-  width: 40%;
-  border-radius: 10px;
-  padding: 20px 0;
-}
-
-.wrapper .on-going {
-  background-color: #6096B4;
-}
-.wrapper .done {
-  background-color: #93BFCF;
-}
-
-.wrapper h2 {
-  font-family: 'Inter';
-  font-size: 2rem;
-  color: white;
-  text-align: center;
-  padding-bottom: 30px;
-}
-
-.input-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.submit-button {
-  margin: 25px 0;
-  width: 130px;
-  height: 50px;
-  font-family: 'Inter';
-  font-size: 1rem;
-  border-color: transparent;
-  background-color: #BDCDD6;
-}
-
-.submit-button:hover {
-  cursor: pointer;
-}
-
 @media (min-width: 1024px) {
+  #nav {
+    display: flex;
+    justify-content: center;
+    font-family: 'Inter';
+    font-size: 1.2rem;
+    background-color: #B6CFD8;
+  }
+
+  #nav a {
+    color: #000000;
+    padding: 20px;
+  }
+
+  #nav a.router-link-active {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+
+
   header {
     display: flex;
     place-items: center;
